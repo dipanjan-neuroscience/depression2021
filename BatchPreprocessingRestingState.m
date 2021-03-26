@@ -4,8 +4,13 @@
 % by using the script acpc_coreg.m
 
 clear all
-SPM_PATH =  'D:\1_DEPRESSION_WORK\Code\SPM12';
+% SPM_PATH =  'D:\1_DEPRESSION_WORK\Code\SPM12';
+% addpath(SPM_PATH)
+
+root_dir = pwd;
+SPM_PATH = fullfile(root_dir, 'spm12');
 addpath(SPM_PATH)
+
 
 %% Initialize SPM
 
@@ -33,11 +38,20 @@ refslice = 1;
 
 
 % for smoothing
-fwhm=[6 6 6]; % the thumb of rules says fwhm should be twice the voxel dimension
+fwhm=[4 4 10]; % the thumb of rules says fwhm should be twice the voxel dimension
 
-%subNames= {'sub-01','sub-02', 'sub-03', 'sub-04', 'sub-05', 'sub-06', 'sub-07', 'sub-08', 'sub-09', 'sub-10','sub-11','sub-12', 'sub-13', 'sub-14', 'sub-15', 'sub-16', 'sub-17', 'sub-18', 'sub-19', 'sub-20','sub-21','sub-22', 'sub-23', 'sub-24', 'sub-25', 'sub-26', 'sub-27', 'sub-28', 'sub-30', 'sub-31','sub-32', 'sub-33', 'sub-34', 'sub-35', 'sub-36', 'sub-37', 'sub-38', 'sub-39', 'sub-40','sub-41','sub-42', 'sub-43', 'sub-44', 'sub-45', 'sub-46', 'sub-47', 'sub-48', 'sub-49', 'sub-50','sub-51','sub-52', 'sub-53', 'sub-54', 'sub-55', 'sub-56', 'sub-57', 'sub-58', 'sub-59', 'sub-60','sub-61','sub-62', 'sub-63', 'sub-64', 'sub-65', 'sub-66', 'sub-67', 'sub-68', 'sub-69', 'sub-70','sub-71', 'sub-72'};
-%subNames= {'sub-1129','sub-1130','sub-1131','sub-1132', 'sub-1133', 'sub-1134', 'sub-1135', 'sub-1136', 'sub-1137', 'sub-1138', 'sub-1139', 'sub-1140','sub-1141','sub-1142', 'sub-1143', 'sub-1144', 'sub-1145', 'sub-1146', 'sub-1147', 'sub-1148', 'sub-1149', 'sub-1150','sub-1151','sub-1152', 'sub-1153', 'sub-1154', 'sub-1155', 'sub-1156', 'sub-1157', 'sub-1158', 'sub-1159', 'sub-1160','sub-1161','sub-1162', 'sub-1163', 'sub-1164', 'sub-1165', 'sub-1166', 'sub-1167', 'sub-1168', 'sub-1169', 'sub-1170','sub-1171','sub-1172', 'sub-1173', 'sub-1174', 'sub-1175', 'sub-1176', 'sub-1177', 'sub-1178', 'sub-1179', 'sub-1180','sub-1181','sub-1182', 'sub-1183', 'sub-1184', 'sub-1185', 'sub-1186', 'sub-1187', 'sub-1188', 'sub-1189', 'sub-1190'};
-subNames= {'sub-1023','sub-1025','sub-1026','sub-1027', 'sub-1030', 'sub-1032', 'sub-1033', 'sub-1034', 'sub-1037', 'sub-1039', 'sub-1040', 'sub-1041','sub-1043','sub-1045', 'sub-1048', 'sub-1051', 'sub-1052', 'sub-1053', 'sub-1056', 'sub-1057', 'sub-1058', 'sub-1059','sub-1060','sub-1062', 'sub-1063', 'sub-1064', 'sub-1065', 'sub-1067', 'sub-1068', 'sub-1070', 'sub-1073', 'sub-1074','sub-1075','sub-1077', 'sub-1078', 'sub-1079', 'sub-1082', 'sub-1085', 'sub-1087', 'sub-1089', 'sub-1090', 'sub-1091','sub-1092','sub-1093', 'sub-1094', 'sub-1095', 'sub-1096', 'sub-1097', 'sub-1098', 'sub-1099', 'sub-1100', 'sub-1102','sub-1103','sub-1104', 'sub-1107', 'sub-1108', 'sub-1111', 'sub-1112', 'sub-1113', 'sub-1114', 'sub-1116', 'sub-1117'};
+% Get a list of all files and folders in func folder.
+files = dir('func');
+% Get a logical vector that tells which is a directory.
+dirFlags = [files.isdir];
+% Extract only those that are directories.
+subFolders = files(dirFlags);
+subFolders(ismember( {subFolders.name}, {'.', '..'})) = [];  %remove . and ..
+for k = 1 : length(subFolders)
+subNames{1,k}=subFolders(k).name;
+end
+
+clear k subFolders 
 
 for sI = 1: length(subNames)
 
@@ -46,9 +60,9 @@ for sI = 1: length(subNames)
 %% directories 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     
 % define directories    
-str_dir = fullfile('D:\1_DEPRESSION_WORK\Programs\Input\SRPBS\data', subNames{sI},'t1');
-func_dir = fullfile('D:\1_DEPRESSION_WORK\Programs\Input\SRPBS\data', subNames{sI},'rsfmri');
-root_dir = ('D:\1_DEPRESSION_WORK\Programs\Input\SRPBS\data');
+str_dir = fullfile(root_dir, subNames{sI},'t1');
+func_dir = fullfile(root_dir, subNames{sI},'rsfmri');
+
 
 % file select
 %f_or = spm_select('FPList',func_dir,'^vol.*\.nii$'); % original functional images
