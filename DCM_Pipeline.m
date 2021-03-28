@@ -1,7 +1,8 @@
 %initialize spm
 clear all
 
-SPM_PATH = 'D:\1_DEPRESSION_WORK\Code\spm12';
+root_dir = pwd;
+SPM_PATH = fullfile(root_dir, 'spm12');
 addpath(SPM_PATH)
 
 
@@ -11,46 +12,32 @@ spm_jobman('initcfg');
 
 %% extract voi
 
-%subNames= {'sub-01','sub-02', 'sub-03', 'sub-04', 'sub-05', 'sub-06', 'sub-07',  'sub-09', 'sub-10','sub-11','sub-12', 'sub-13', 'sub-14','sub-16', 'sub-17', 'sub-18', 'sub-19', 'sub-20','sub-21','sub-22', 'sub-23', 'sub-24', 'sub-25', 'sub-26', 'sub-27', 'sub-28', 'sub-30', 'sub-31', 'sub-33', 'sub-34', 'sub-35', 'sub-36', 'sub-37', 'sub-38', 'sub-39', 'sub-40','sub-41','sub-42', 'sub-43', 'sub-44', 'sub-45', 'sub-47', 'sub-48', 'sub-49','sub-51','sub-52', 'sub-53', 'sub-54', 'sub-56', 'sub-57', 'sub-58', 'sub-59', 'sub-60','sub-62', 'sub-63', 'sub-64', 'sub-66', 'sub-67', 'sub-68', 'sub-69', 'sub-70','sub-71', 'sub-72'};
-%subNames= {'sub-01', 'sub-03', 'sub-04', 'sub-05', 'sub-06', 'sub-07', 'sub-08', 'sub-09', 'sub-10','sub-11','sub-12', 'sub-13', 'sub-14', 'sub-15', 'sub-16', 'sub-17', 'sub-18', 'sub-19', 'sub-20','sub-21','sub-22', 'sub-24', 'sub-25', 'sub-26', 'sub-27', 'sub-28', 'sub-29'};
-subNames= {'sub-01', 'sub-02','sub-03', 'sub-04', 'sub-05', 'sub-06', 'sub-07', 'sub-08', 'sub-09', 'sub-10','sub-11','sub-12', 'sub-13', 'sub-14', 'sub-15', 'sub-16', 'sub-19', 'sub-21','sub-22', 'sub-23', 'sub-24', 'sub-25', 'sub-26', 'sub-27', 'sub-28'};
-%subNames= {'sub-01', 'sub-03', 'sub-04', 'sub-05', 'sub-06', 'sub-07', 'sub-08', 'sub-09','sub-11','sub-12', 'sub-13', 'sub-14', 'sub-15', 'sub-16', 'sub-17', 'sub-18', 'sub-19', 'sub-20','sub-21','sub-22', 'sub-24', 'sub-25', 'sub-26', 'sub-27', 'sub-28', 'sub-29'};
+% Get a list of all files and folders in func folder.
+files = dir('func');
+% Get a logical vector that tells which is a directory.
+dirFlags = [files.isdir];
+% Extract only those that are directories.
+subFolders = files(dirFlags);
+subFolders(ismember( {subFolders.name}, {'.', '..'})) = [];  %remove . and ..
+for k = 1 : length(subFolders)
+subNames{1,k}=subFolders(k).name;
+end
 
-% maskNames={ 'lBroca.nii','lThal.nii','rBroca.nii','rThal.nii'};
-% voiNames= {'lBroca','lThal','rBroca','rThal'};
+clear k subFolders 
 
-% maskNames={'lsThal.nii','rsThal.nii'};
-% voiNames= {'lsThal','rsThal'};
+GLM2_dir=fullfile(root_dir,'GLM2');
 
-% maskNames={'lp24cd.nii','lp24rv.nii','lp32.nii','lsg32.nii','rp24cd.nii','rp24rv.nii','rp32.nii','rsg32.nii'};
-% voiNames= {'lp24cd','lp24rv','lp32','lsg32','rp24cd','rp24rv','rp32','rsg32'};
-
-% maskNames={ 'laIns.nii','lpIns.nii','raIns.nii','rpIns.nii'};
-% voiNames= {'laIns','lpIns','raIns','rpIns'};
-
-
-maskNames={'lFp1.nii','lSSC.nii','lV1.nii','lA1.nii','lSMA.nii','lMC.nii','laIns.nii','lpIns.nii','lThal.nii','lBroca.nii','rFp1.nii','rSSC.nii','rV1.nii','rA1.nii','rSMA.nii','rMC.nii','raIns.nii','rpIns.nii','rThal.nii','rBroca.nii'};
-voiNames={'lFp1','lSSC','lV1','lA1','lSMA','lMC','laIns','lpIns','lThal','lBroca','rFp1','rSSC','rV1','rA1','rSMA','rMC','raIns','rpIns','rThal','rBroca'};
-
-
-% subNames= {'sub-10'}; 
-% maskNames={'sub10_lV1.nii','sub10_rV1.nii'};
-% voiNames={'lV1','rV1'};
-% 
-% 
-% subNames= {'sub-14'}; 
-% maskNames={'sub14_lfp1.nii','sub14_rfp1.nii'};
-% voiNames={'lFp1','rFp1'};
-
+maskNames={'lFp1.nii','lSSC.nii','lV1.nii','lA1.nii','lSMA.nii','lMC.nii','laIns.nii','lpIns.nii','lThal.nii','lBroca.nii','rFp1.nii','rSSC.nii','rV1.nii','rA1.nii','rSMA.nii','rMC.nii','raIns.nii','rpIns.nii'};
+voiNames={'lFp1','lSSC','lV1','lA1','lSMA','lMC','laIns','lpIns','lThal','lBroca','rFp1','rSSC','rV1','rA1','rSMA','rMC','raIns','rpIns'};
 
 
 for sI = 1: length(subNames)
 
-spm_dir = fullfile('D:\1_DEPRESSION_WORK\Programs\Input\DepRestingState\GLM2_POST', subNames{sI},'SPM.mat');
+spm_dir = fullfile('GLM2_dir', subNames{sI},'SPM.mat');
 
 for vI = 1: length(voiNames)
 
-mask_dir= fullfile ('D:\1_DEPRESSION_WORK\Code\Masks\PC', maskNames{vI});
+mask_dir= fullfile (root_dir, maskNames{vI});
 
 
 clear matlabbatch;
@@ -77,21 +64,20 @@ end
 voiNamesL={'VOI_lSMA_1.mat', 'VOI_lMC_1.mat'};
 voiNamesR={'VOI_rSMA_1.mat', 'VOI_rMC_1.mat'};   
 
-% voiNamesLintero5={'VOI_lp24cd_1.mat', 'VOI_lp24rv_1.mat','VOI_lp32_1.mat', 'VOI_lsg32_1.mat','VOI_lICC_1.mat'};
-% voiNamesRintero5={'VOI_rp24cd_1.mat', 'VOI_rp24rv_1.mat','VOI_rp32_1.mat', 'VOI_rsg32_1.mat','VOI_rICC_1.mat'}; 
 
-voiNamesL={'VOI_laIns_1.mat','VOI_lpIns_1.mat'};
-voiNamesR={'VOI_raIns_1.mat','VOI_rpIns_1.mat'}; 
+% voiNamesL={'VOI_laIns_1.mat','VOI_lpIns_1.mat'};
+% voiNamesR={'VOI_raIns_1.mat','VOI_rpIns_1.mat'}; 
 
-voiNamesL={'VOI_lFp1_1.mat','VOI_lSSC_1.mat','VOI_lV1_1.mat','VOI_lA1_1.mat'};
-voiNamesR={'VOI_rFp1_1.mat','VOI_rSSC_1.mat','VOI_rV1_1.mat','VOI_rA1_1.mat'};
+% voiNamesL={'VOI_lFp1_1.mat','VOI_lSSC_1.mat','VOI_lV1_1.mat','VOI_lA1_1.mat'};
+% voiNamesR={'VOI_rFp1_1.mat','VOI_rSSC_1.mat','VOI_rV1_1.mat','VOI_rA1_1.mat'};
 
 
 
 
 for sI = 1: length(subNames)
-%cd( fullfile('D:\1_DEPRESSION_WORK\Programs\Input\RestingDepHealthy\GLM2',subNames{sI}));
-cd(fullfile('D:\1_DEPRESSION_WORK\Programs\Input\DepRestingState\GLM2_POST', subNames{sI}));
+
+cd(fullfile(GLM2_dir, subNames{sI}));
+
 model_name = 'L_Mot';
 
 xY         = voiNamesL;
@@ -111,9 +97,6 @@ TE  = 0.035; % echo time (seconds)
 % Connectivity matrices
 
 a  = ones(n,n);
-
-% a(1,4)=0;
-% a(4,1)=0;
 
 b  = zeros(n,n,nu);
 
@@ -164,8 +147,9 @@ end
 clear DCM
 
 for sI = 1: length(subNames)
-%cd( fullfile('D:\1_DEPRESSION_WORK\Programs\Input\RestingDepHealthy\GLM2',subNames{sI}));
-cd(fullfile('D:\1_DEPRESSION_WORK\Programs\Input\DepRestingState\GLM2_POST', subNames{sI}));
+
+cd(fullfile(GLM_dir, subNames{sI}));
+
 model_name = 'R_Mot';
 
 xY         = voiNamesR;
@@ -185,8 +169,7 @@ TE  = 0.035; % echo time (seconds)
 % Connectivity matrices
 
 a  = ones(n,n);
-% a(1,4)=0;
-% a(4,1)=0;
+
 
 b  = zeros(n,n,nu);
 
@@ -257,8 +240,7 @@ save('GCM_R_Mot.mat','GCM_R_Mot');
 
 
 %%PEB
-% load GCM_L_Mot.mat 
-% load GCM_R_Mot.mat 
+
 
 load GCM_L_Mot.mat 
 load GCM_R_Mot.mat 
