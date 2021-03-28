@@ -4,8 +4,6 @@
 % by using the script acpc_coreg.m
 
 clear all
-% SPM_PATH =  'D:\1_DEPRESSION_WORK\Code\SPM12';
-% addpath(SPM_PATH)
 
 root_dir = pwd;
 SPM_PATH = fullfile(root_dir, 'spm12');
@@ -25,16 +23,14 @@ spm_figure('Create','Graphics','Graphics','on');
 %% definition according to the specific data 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
-nd=0; % no of dummy scans
+nd=5; % no of dummy scans
 
 % for Slice time correction 
-nslices = 40; 
+nslices = 25; 
 tr = 2.5; % in seconds
-ta = 2.4375; % ta = tr - (tr/nslices)
-so=[1:1:40];
-%so = [0 100 200 300 400 500 600 700 800 900 1000 1100 1200 1300 1400 1500 1600 1700 1800 1900 2000 2100 2200 2300 2400]; % here we have ebtered slice timing in milliseconds
-%refslice = 0; % reference slice timing in milliseconds
-refslice = 1;
+ta = 2.4; % ta = tr - (tr/nslices)
+so = [0 100 200 300 400 500 600 700 800 900 1000 1100 1200 1300 1400 1500 1600 1700 1800 1900 2000 2100 2200 2300 2400]; % here we have ebtered slice timing in milliseconds
+refslice = 0; % reference slice timing in milliseconds
 
 
 % for smoothing
@@ -65,8 +61,8 @@ func_dir = fullfile(root_dir, subNames{sI},'rsfmri');
 
 
 % file select
-%f_or = spm_select('FPList',func_dir,'^vol.*\.nii$'); % original functional images
-f = spm_select('FPList',func_dir,'^vol.*\.nii$'); % functional images
+f_or = spm_select('FPList',func_dir,'^vol.*\.nii$'); % original functional images
+%f = spm_select('FPList',func_dir,'^vol.*\.nii$'); % functional images
 s= spm_select('FPList',str_dir,'^defaced.*\.nii$'); % structural images 
 
 
@@ -75,12 +71,12 @@ s= spm_select('FPList',str_dir,'^defaced.*\.nii$'); % structural images
 %% create directory GLM & GLM2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-GLM_dir=fullfile(root_dir,'GLM_HC');
+GLM_dir=fullfile(root_dir,'GLM');
 mkdir(GLM_dir)
 glm_dir=fullfile(GLM_dir, subNames{sI});
 mkdir(glm_dir)
 
-GLM2_dir=fullfile(root_dir,'GLM2_HC');
+GLM2_dir=fullfile(root_dir,'GLM2');
 mkdir(GLM2_dir)
 glm2_dir=fullfile(GLM2_dir, subNames{sI});
 mkdir(glm2_dir)
@@ -89,22 +85,21 @@ mkdir(glm2_dir)
 %% CONVERT FUNCTIONAL SCANS FROM 4D TO 3D
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%spm_file_split(f_or);
+spm_file_split(f_or);
 
 
 
 % clear matlabbatch
-% 
-% matlabbatch{1}.cfg_basicio.file_dir.dir_ops.cfg_mkdir.parent = cellstr(func_dir);
-% matlabbatch{1}.cfg_basicio.file_dir.dir_ops.cfg_mkdir.name = 'original';
-% 
-% matlabbatch{2}.cfg_basicio.file_dir.file_ops.file_move.files = cellstr(f_or); % remove the original functional file
-% matlabbatch{2}.cfg_basicio.file_dir.file_ops.file_move.action.moveto = cellstr(fullfile(func_dir,'original'));
-% 
-% spm_jobman('run',matlabbatch);
+matlabbatch{1}.cfg_basicio.file_dir.dir_ops.cfg_mkdir.parent = cellstr(func_dir);
+matlabbatch{1}.cfg_basicio.file_dir.dir_ops.cfg_mkdir.name = 'original';
+ 
+matlabbatch{2}.cfg_basicio.file_dir.file_ops.file_move.files = cellstr(f_or); % remove the original functional file
+matlabbatch{2}.cfg_basicio.file_dir.file_ops.file_move.action.moveto = cellstr(fullfile(func_dir,'original'));
+ 
+spm_jobman('run',matlabbatch);
 
 
-%f = spm_select('FPList',func_dir,'^vol.*\.nii$'); % functional images
+f = spm_select('FPList',func_dir,'^vol.*\.nii$'); % functional images
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% DUMMY SCANS
@@ -126,7 +121,7 @@ spm_jobman('run',matlabbatch);
 
 
 %% Realignment
-%f = spm_select('FPList',func_dir,'^vol.*\.nii$'); % functional images
+f = spm_select('FPList',func_dir,'^vol.*\.nii$'); % functional images
 
 clear matlabbatch
 
