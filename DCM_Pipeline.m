@@ -23,7 +23,7 @@ for k = 1 : length(subFolders)
 subNames{1,k}=subFolders(k).name;
 end
 
-clear k subFolders 
+clear  subFolders 
 
 GLM2_dir=fullfile(root_dir,'GLM2');
 
@@ -148,7 +148,7 @@ clear DCM
 
 for sI = 1: length(subNames)
 
-cd(fullfile(GLM_dir, subNames{sI}));
+cd(fullfile(GLM2_dir, subNames{sI}));
 
 model_name = 'R_Mot';
 
@@ -219,14 +219,14 @@ clear DCM
 
  for h=1: length(subNames) 
    
- GCM_L_Mot(h,1) = {fullfile('D:\1_DEPRESSION_WORK\Programs\Input\DepRestingState\GLM2_POST', subNames{h},'DCM_L_Mot.mat')}; 
+ GCM_L_Mot(h,1) = {fullfile(GLM2_dir, subNames{h},'DCM_L_Mot.mat')}; 
  
  end
   
  
  for h=1: length(subNames) 
    
- GCM_R_Mot(h,1) = {fullfile('D:\1_DEPRESSION_WORK\Programs\Input\DepRestingState\GLM2_POST', subNames{h},'DCM_R_Mot.mat')}; 
+ GCM_R_Mot(h,1) = {fullfile(GLM2_dir, subNames{h},'DCM_R_Mot.mat')}; 
  
   end
 
@@ -259,7 +259,7 @@ M   = struct();
 M.Q = 'all'; 
 
 % Specify design matrix for N subjects. It should start with a constant column
-M.X = horzcat(ones(25,1),BDIAgeSex);
+M.X = horzcat(ones(k,1),BDIAgeSex);
 
 % Choose field
 field = {'A'};
@@ -274,7 +274,7 @@ M   = struct();
 M.Q = 'all'; 
 
 % Specify design matrix for N subjects. It should start with a constant column
-M.X = horzcat(ones(25,1),BDIAgeSex);
+M.X = horzcat(ones(k,1),BDIAgeSex);
 
 % Choose field
 field = {'A'};
@@ -302,6 +302,7 @@ BMA_R_ExtTrt=spm_dcm_peb_bmc(PEB_R_ExtTrt);
 save('BMA_R_ExtTrt.mat','BMA_R_ExtTrt');
 spm_dcm_peb_review(BMA_R_ExtTrt,GCM_R_Ext);
 
+
 %%leave one out cross validation 
 
 %clear 
@@ -316,7 +317,7 @@ M   = struct();
 M.Q = 'all'; 
 
 % Specify design matrix for N subjects. It should start with a constant column
-M.X = horzcat(ones(63,1),BDIAgeSex);
+M.X = horzcat(ones(k,1),BDIAgeSex);
 
 [qE,qC,Q]=spm_dcm_loo(GCM_L_ExtS,M,{'A'});% (to,from)
 
